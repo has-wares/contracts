@@ -2,7 +2,7 @@ from contractor import get_contracts, create_contract_log
 import finetune as ft
 
 def get_help(args, game):
-    return "Available Commands: help/look"
+    return "Available Commands: help/look/gather"
 
 def look(args, game):
     return "You see the road to the Monastery"

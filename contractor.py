@@ -17,13 +17,3 @@ def create_contract_log(contracts):
         contract_log.append(f"{i}) {c['title']} (Diff {c['difficulty']}) Reward {c['reward']['gold']} gold!")
     return contract_log
 
-
-def choose_contract(contracts):
-    choice = input('Choose a contract: 1, 2, 3 !\n').strip()
-    if choice.isdigit():
-        n = int(choice)
-        index = n - 1
-        if 1<= n <= len(contracts):
-            return contracts[index]
-
-    return "Invalid Choice. Type 1, 2 or 3!!"

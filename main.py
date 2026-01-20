@@ -20,8 +20,10 @@ frames = utils.load_frames_auto(
 fire = LoopAnim(frames, fps=8)
 game = new_game()
 cmd_text = ""
-response = ""
-cmd = ""
+response_lines = []     # list[str]
+scroll_lines = 0        # how many lines up from the bottom we are
+MAX_LOG_LINES = 500
+
 running = True
 
 
@@ -31,16 +33,37 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+        elif event.type == pygame.MOUSEWHEEL:
+            # wheel up -> scroll up, wheel down -> scroll down
+            scroll_lines += event.y
+            if scroll_lines < 0:
+                scroll_lines = 0
+
         elif event.type == pygame.KEYDOWN:
+
             if event.key == pygame.K_RETURN:
-                response = dispatch_command(cmd_text, game)
+                out = dispatch_command(cmd_text, game)
                 cmd_text = ""
+
+                if out:
+                    response_lines.extend(str(out).splitlines())
+                    if len(response_lines) > MAX_LOG_LINES:
+                        response_lines = response_lines[-MAX_LOG_LINES:]
+                    scroll_lines = 0
 
             elif event.key == pygame.K_BACKSPACE:
                 cmd_text = cmd_text[:-1]
 
             elif event.key == pygame.K_ESCAPE:
                 running = False
+
+            elif event.key == pygame.K_PAGEUP:
+                scroll_lines += 3
+
+            elif event.key == pygame.K_PAGEDOWN:
+                scroll_lines -= 3
+                if scroll_lines < 0:
+                    scroll_lines = 0
 
             else:
                 cmd_text += event.unicode
@@ -54,8 +77,9 @@ while running:
     ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
 
     ui.draw_text(screen, cmd_text, font, uiconfig.WHITE, ui.TEXT_ENTRY)
-    ui.draw_multiline_text(screen, response, font, uiconfig.WHITE, ui.RESPONSE_BOX)
-
+    scroll_lines, max_scroll = ui.draw_scrollable_text(
+        screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX
+    )
 
     pygame.display.flip()
 

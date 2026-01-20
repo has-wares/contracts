@@ -1,13 +1,6 @@
 import pygame
 
 def load_frames_auto(path: str, scale_to=None):
-    """
-    Loads a single-row sprite sheet where frames are square and frame size == sheet height.
-    Your case: 15360x640 => frame_w=640 frame_h=640 => 24 frames
-
-    scale_to: (w,h) to resize each frame (optional)
-    drop_last_blank: if last frame is empty / junk, remove it
-    """
     sheet = pygame.image.load(path).convert_alpha()
 
     frame_h = sheet.get_height()

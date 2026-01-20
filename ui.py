@@ -60,3 +60,35 @@ def draw_multiline_text(surface, text, font, color, rect, line_spacing=4):
             break
         surface.blit(img, (x, y))
         y += img.get_height() + line_spacing
+
+
+def draw_scrollable_text(surface, lines, scroll_lines, font, color, rect, line_spacing=4):
+    old_clip = surface.get_clip()
+    surface.set_clip(rect)
+
+    x = rect.x + 6
+    y = rect.y + 6
+
+    line_h = font.get_height() + line_spacing
+    max_visible = max(1, (rect.h - 12) // line_h)
+
+    total = len(lines)
+    max_scroll = max(0, total - max_visible)   # <-- key line
+
+    if scroll_lines < 0:
+        scroll_lines = 0
+    if scroll_lines > max_scroll:
+        scroll_lines = max_scroll
+
+    end = total - scroll_lines
+    start = max(0, end - max_visible)
+
+    for line in lines[start:end]:
+        img = font.render(str(line), True, color)
+        surface.blit(img, (x, y))
+        y += line_h
+
+    surface.set_clip(old_clip)
+
+    return scroll_lines, max_scroll
+
