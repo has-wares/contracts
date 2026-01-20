@@ -11,7 +11,8 @@ screen = pygame.display.set_mode((uiconfig.WINDOW_WIDTH, uiconfig.WINDOW_HEIGHT)
 pygame.display.set_caption("CONTRACTS")
 pygame.key.set_repeat(300, 40)
 clock = pygame.time.Clock()
-font = pygame.font.Font(None, uiconfig.INPUT_FONT_SIZE)
+font = pygame.font.SysFont("consolas", uiconfig.INPUT_FONT_SIZE)
+
 
 frames = utils.load_frames_auto(
     "assets/campfire_anim.png",
@@ -20,8 +21,11 @@ frames = utils.load_frames_auto(
 fire = LoopAnim(frames, fps=8)
 game = new_game()
 cmd_text = ""
-response_lines = []     # list[str]
-scroll_lines = 0        # how many lines up from the bottom we are
+resource_text = ""
+response_lines = ['type help',]
+fire_points = ""
+fire_intensity = ""
+scroll_lines = 0
 MAX_LOG_LINES = 500
 
 running = True
@@ -42,11 +46,11 @@ while running:
         elif event.type == pygame.KEYDOWN:
 
             if event.key == pygame.K_RETURN:
-                out = dispatch_command(cmd_text, game)
+                output = dispatch_command(cmd_text, game)
                 cmd_text = ""
 
-                if out:
-                    response_lines.extend(str(out).splitlines())
+                if output:
+                    response_lines.extend(output)
                     if len(response_lines) > MAX_LOG_LINES:
                         response_lines = response_lines[-MAX_LOG_LINES:]
                     scroll_lines = 0
@@ -57,16 +61,20 @@ while running:
             elif event.key == pygame.K_ESCAPE:
                 running = False
 
-            elif event.key == pygame.K_PAGEUP:
-                scroll_lines += 3
-
-            elif event.key == pygame.K_PAGEDOWN:
-                scroll_lines -= 3
-                if scroll_lines < 0:
-                    scroll_lines = 0
+            # elif event.key == pygame.K_PAGEUP:
+            #     scroll_lines += 3
+            #
+            # elif event.key == pygame.K_PAGEDOWN:
+            #     scroll_lines -= 3
+            #     if scroll_lines < 0:
+            #         scroll_lines = 0
 
             else:
                 cmd_text += event.unicode
+
+    resource_text = utils.format_resources(game)
+    fire_points = utils.get_fire_points(game)
+    fire_intensity = utils.get_fire_intensity(game)
 
     fire.update(dt, 8)
     screen.fill(uiconfig.BLACK)
@@ -75,8 +83,15 @@ while running:
     ui.draw_rect(screen, uiconfig.WHITE, ui.TEXT_ENTRY)
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESPONSE_BOX)
     ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
+    ui.draw_rect(screen, uiconfig.WHITE, ui.RESOURCE_BOX)
+    ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
 
     ui.draw_text(screen, cmd_text, font, uiconfig.WHITE, ui.TEXT_ENTRY)
+    ui.draw_text(screen, fire_points, font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
+    ui.draw_text(screen, fire_intensity, font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=650)
+
+    ui.draw_multiline_text(screen, resource_text, font, uiconfig.WHITE, ui.RESOURCE_BOX)
+
     scroll_lines, max_scroll = ui.draw_scrollable_text(
         screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX
     )

@@ -1,35 +1,70 @@
 from contractor import get_contracts, create_contract_log
 import finetune as ft
+import utils
 
 def get_help(args, game):
-    return "Available Commands: help/look/gather"
+    return [
+        "Commands:",
+        "  help",
+        "  look",
+        "  contracts",
+        "  gather wood",
+        "  gather herbs",
+        "",
+        "Tip: Use PageUp/PageDown or mouse wheel to scroll",
+        "the log."
+    ]
+
+
 
 def look(args, game):
-    return "You see the road to the Monastery"
+    return ["You see the road to the Monastery"]
 
 def show_contracts(args, game):
     if len(game['contracts']) == 0:
         game['contracts'] = get_contracts()
     log = create_contract_log(game['contracts'])
-    return "CONTRACTS:\n" + "\n".join(log)
+    return ["CONTRACTS:"] + log
 
 def gather(args, game):
     resources = ['wood', 'herbs']
     if not args:
-        return "Gather what?\nwood/herbs"
+        return ["Gather what?",
+                "wood/herbs"]
 
     resource = args[0]
 
     if resource not in resources:
-        return "You can't gather something like that"
+        return ["You can't gather something like that"]
 
-    if game['fire points'] >= ft.costs[resource]:
-        game['fire points'] -= ft.costs[resource]
+    if game['fire points'] >= ft.action_costs[resource]:
+        game['fire points'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
-        return f"Gathered {ft.to_gather[resource]} {resource}"
+        game['fire heat'] -= 2
+        utils.update_fire_intensity(game)
+        return [f"Gathered {ft.to_gather[resource]} {resource}"]
     else:
-        return "Not enough fire points"
+        return ["Not enough fire points"]
 
+def burn(args, game):
+    resources = ['wood', 'skulls']
+
+    if not args:
+        return ["Burn what?"]
+
+    resource = args[0]
+
+    if resource not in resources:
+        return ["You can't burn something like that"]
+
+    if game['resources'][resource] >= ft.burn_costs[resource]:
+        game['resources'][resource] -= ft.burn_costs[resource]
+        game['fire heat'] += 5
+        utils.update_fire_intensity(game)
+        return ["Fire thanks you for your service",
+                f"the fire is now {game['fire intensity']}"]
+    else:
+        return [f"Not enough {resource}"]
 
 
 COMMAND_MAP = {
@@ -37,6 +72,7 @@ COMMAND_MAP = {
     'look': look,
     'contracts': show_contracts,
     'gather': gather,
+    'burn' : burn,
 }
 
 def parse_command(command: str):
@@ -50,10 +86,10 @@ def parse_command(command: str):
 def dispatch_command(command, game):
     cmd, args = parse_command(command)
     if not cmd:
-        return ""  # show nothing if empty enter
+        return []  # show nothing if empty enter
 
     func = COMMAND_MAP.get(cmd)
     if not func:
-        return f"Unknown command: {cmd}"
+        return [f"Unknown command: {cmd}"]
 
     return func(args, game)  # <-- CALL the function

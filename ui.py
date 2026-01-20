@@ -36,13 +36,28 @@ COOKING_BOX = pygame.Rect(
     uiconfig.COOKING_BOX_HEIGHT
 )
 
+RESOURCE_BOX = pygame.Rect(
+    uiconfig.RESOURCE_BOX_X,
+    uiconfig.RESOURCE_BOX_Y,
+    uiconfig.RESOURCE_BOX_WIDTH,
+    uiconfig.RESOURCE_BOX_HEIGHT
+)
+
+FIRE_INFO_BOX = pygame.Rect(
+    uiconfig.FIRE_INFO_BOX_X,
+    uiconfig.FIRE_INFO_BOX_Y,
+    uiconfig.FIRE_INFO_BOX_WIDTH,
+    uiconfig.FIRE_INFO_BOX_HEIGHT
+)
+
+
 def draw_rect(surface, color, box):
     pygame.draw.rect(surface, color, box, 2)
 
 
-def draw_text(surface, text, font, color, box):
+def draw_text(surface, text, font, color, box, padding=10):
     text_font = font.render(text, True, color)
-    text_rect = text_font.get_rect(midleft=(box.x + 10, box.centery))
+    text_rect = text_font.get_rect(midleft=(box.x + padding, box.centery))
     surface.blit(text_font, text_rect)
 
 def draw_image(surface, image, rect):

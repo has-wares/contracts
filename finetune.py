@@ -1,5 +1,5 @@
 
-costs = {
+action_costs = {
     'wood': 5,
     'herbs' : 5,
     }
@@ -7,4 +7,9 @@ costs = {
 to_gather ={
     "wood": 5,
     "herbs": 5,
+    }
+
+burn_costs = {
+    "wood": 5,
+    "skull": 1,
     }
