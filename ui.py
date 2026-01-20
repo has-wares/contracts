@@ -1,39 +1,39 @@
 import pygame
-import config
+import uiconfig
 
 TEXT_ENTRY = pygame.Rect(
-    config.ENTRY_BOX_X,
-    config.ENTRY_BOX_Y,
-    config.ENTRY_BOX_WIDTH,
-    config.ENTRY_BOX_HEIGHT
+    uiconfig.ENTRY_BOX_X,
+    uiconfig.ENTRY_BOX_Y,
+    uiconfig.ENTRY_BOX_WIDTH,
+    uiconfig.ENTRY_BOX_HEIGHT
     )
 
 RESPONSE_BOX = pygame.Rect(
-    config.RESPONSE_BOX_X,
-    config.RESPONSE_BOX_Y,
-    config.RESPONSE_BOX_WIDTH,
-    config.RESPONSE_BOX_HEIGHT
+    uiconfig.RESPONSE_BOX_X,
+    uiconfig.RESPONSE_BOX_Y,
+    uiconfig.RESPONSE_BOX_WIDTH,
+    uiconfig.RESPONSE_BOX_HEIGHT
     )
 
 BONFIRE_BOX = pygame.Rect(
-    config.BONFIRE_BOX_X,
-    config.BONFIRE_BOX_Y,
-    config.BONFIRE_BOX_WIDTH,
-    config.BONFIRE_BOX_HEIGHT
+    uiconfig.BONFIRE_BOX_X,
+    uiconfig.BONFIRE_BOX_Y,
+    uiconfig.BONFIRE_BOX_WIDTH,
+    uiconfig.BONFIRE_BOX_HEIGHT
     )
 
 ALCHEMY_BOX = pygame.Rect(
-    config.ALCHEMY_BOX_X,
-    config.ALCHEMY_BOX_Y,
-    config.ALCHEMY_BOX_WIDTH,
-    config.ALCHEMY_BOX_HEIGHT
+    uiconfig.ALCHEMY_BOX_X,
+    uiconfig.ALCHEMY_BOX_Y,
+    uiconfig.ALCHEMY_BOX_WIDTH,
+    uiconfig.ALCHEMY_BOX_HEIGHT
 )
 
 COOKING_BOX = pygame.Rect(
-    config.COOKING_BOX_X,
-    config.COOKING_BOX_Y,
-    config.COOKING_BOX_WIDTH,
-    config.COOKING_BOX_HEIGHT
+    uiconfig.COOKING_BOX_X,
+    uiconfig.COOKING_BOX_Y,
+    uiconfig.COOKING_BOX_WIDTH,
+    uiconfig.COOKING_BOX_HEIGHT
 )
 
 def draw_rect(surface, color, box):

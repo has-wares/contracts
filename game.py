@@ -4,6 +4,8 @@ def new_game():
         "contracts": [],
         "selected_contract": None,
         "encounter_index": 0,
+        "fire points": 15,
+        "resources": {"wood": 0, "paper": 0, "salt": 0, "skulls": 0, "herbs": 0},
 
         # later:
         # "player": create_player(),
