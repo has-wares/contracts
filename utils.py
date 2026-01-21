@@ -42,12 +42,14 @@ def clamp(x, low, high):
 
 
 def update_fire_intensity(game):
-    heat = clamp(game.get("fire_heat", 0), 0, 30)
+    heat = clamp(game.get("fire_heat", 0), 0, 60)
     game["fire_heat"] = heat
 
     if heat < 11:
+        game['fire_intensity'] = "FEEBLE"
+    elif heat < 26:
         game['fire_intensity'] = "CALM"
-    elif heat < 21:
+    elif heat < 41:
         game['fire_intensity'] = "CRACKLING"
     else:
         game['fire_intensity'] = "ROARING"

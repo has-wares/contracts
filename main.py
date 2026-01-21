@@ -21,10 +21,7 @@ frames = utils.load_frames_auto(
 fire = LoopAnim(frames, fps=8)
 game = new_game()
 cmd_text = ""
-resource_text = ""
 response_lines = ['type help',]
-fire_points = ""
-fire_intensity = ""
 scroll_lines = 0
 MAX_LOG_LINES = 500
 
@@ -72,10 +69,6 @@ while running:
             else:
                 cmd_text += event.unicode
 
-    resource_text = utils.format_resources(game)
-    fire_points = utils.get_fire_heat(game)
-    fire_intensity = utils.get_fire_intensity(game)
-
     fire.update(dt, 8)
     screen.fill(uiconfig.BLACK)
     fire.draw_centered(screen, ui.BONFIRE_BOX.center)
@@ -87,10 +80,10 @@ while running:
     ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
 
     ui.draw_text(screen, cmd_text, font, uiconfig.WHITE, ui.TEXT_ENTRY)
-    ui.draw_text(screen, fire_points, font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
-    ui.draw_text(screen, fire_intensity, font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=650)
+    ui.draw_text(screen, f"FIRE HEAT: {game['fire_heat']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
+    ui.draw_text(screen, f"FIRE: {game['fire_intensity']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=650)
 
-    ui.draw_multiline_text(screen, resource_text, font, uiconfig.WHITE, ui.RESOURCE_BOX)
+    ui.draw_multiline_text(screen, utils.format_resources(game), font, uiconfig.WHITE, ui.RESOURCE_BOX)
 
     scroll_lines, max_scroll = ui.draw_scrollable_text(
         screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX

@@ -1,7 +1,7 @@
 
 RECIPES ={
-    'paper': {'heat_cost': 0,
-              'ingredients': {'branches': 3},
+    'paper': {'heat_cost': 1,
+              'ingredients': {'branches': 2},
               'output': {'paper': 1},
               'requirement': [],
               'target' : 'resources',

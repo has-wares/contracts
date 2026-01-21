@@ -3,7 +3,7 @@ import utils
 
 def apply_heat_cost(game, amt):
     game['fire_heat'] -= amt
-    game['fire_heat'] = utils.clamp(game['fire_heat'],0,30)
+    game['fire_heat'] = utils.clamp(game['fire_heat'],0,60)
 
 
 def check_for_ingredients(game, ingredients):
@@ -43,4 +43,11 @@ def create_item(game, item_id):
             f"Fire is now {game['fire_intensity']}"]
 
 def create_paper(game):
-    return create_item(game, 'paper')
+    level = game['fire_order'][game['fire_intensity']]
+
+    if level < game['fire_order']["CALM"]:
+        return ["Fire is weak", "Fire Intensity required: CALM"]
+    if level > game['fire_order']['CALM']:
+        return ["Fire is too wild", "paper turns to ash", "Fire Intensity required: CALM"]
+
+    return create_item(game, "paper")

@@ -22,10 +22,12 @@ def get_help(args, game):
 def look(args, game):
     fire_intensity = game['fire_intensity']
 
-    if fire_intensity == "CALM":
+    if fire_intensity == "FEEBLE":
+        return ["Fire allows no vision"]
+    elif fire_intensity == "CALM":
         if 'monastery' not in game['seen']:
             game['seen'].append('monastery')
-            return ["Fire allow for a vision",
+            return ["Fire allows for a vision",
                     "Road to the Monastery is visible"]
         return ["You see the road to the Monastery"]
     elif fire_intensity == "CRACKLING":
@@ -50,14 +52,14 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire_heat'] > ft.action_costs[resource]:
+    if game['fire_heat'] >= ft.action_costs[resource]:
         game['fire_heat'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
         utils.update_fire_intensity(game)
         return [f"Gathered {ft.to_gather[resource]} {resource}",
-                'Time passes the fire weakens']
+                'Time passes fire weakens']
     else:
-        return ["If you leave now fire will extinguish"]
+        return ["Fire does not allow venturing further"]
 
 def burn(args, game):
     fuels = ["branches", "skulls"]
