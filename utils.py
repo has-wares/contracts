@@ -26,7 +26,7 @@ def format_resources(game):
     resource_array = [k for k in resources]
     lines = []
     for i in resource_array:
-        lines.append(f"{i.capitalize().ljust(6)} : {str(resources[i]).rjust(3)}")
+        lines.append(f"{i.capitalize().ljust(8)} : {str(resources[i]).rjust(1)}")
 
     return "\n".join(lines)
 
@@ -51,6 +51,8 @@ def update_fire_intensity(game):
         game['fire intensity'] = "CRACKLING"
     else:
         game['fire intensity'] = "ROARING"
+
+    # heat = clamp(game.get("fire heat", 0), 0, 30)
 
 # from game import new_game
 # game=new_game()

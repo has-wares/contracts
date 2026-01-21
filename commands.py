@@ -2,13 +2,14 @@ from contractor import get_contracts, create_contract_log
 import finetune as ft
 import utils
 
+
 def get_help(args, game):
     return [
         "Commands:",
         "  help",
         "  look",
         "  contracts",
-        "  gather wood",
+        "  gather brC",
         "  gather herbs",
         "",
         "Tip: Use PageUp/PageDown or mouse wheel to scroll",
@@ -18,7 +19,14 @@ def get_help(args, game):
 
 
 def look(args, game):
-    return ["You see the road to the Monastery"]
+    fire_intensity = game['fire intensity']
+
+    if fire_intensity == "CALM":
+        return ["You see the road to the Monastery"]
+    elif fire_intensity == "CRACKLING":
+        return ["Beyond the Monastery you see.."]
+    else:
+        return ["Beyond .. you see the Forsaken Shore"]
 
 def show_contracts(args, game):
     if len(game['contracts']) == 0:
@@ -37,34 +45,54 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire heat'] >= ft.action_costs[resource]:
+    if game['fire heat'] > ft.action_costs[resource]:
         game['fire heat'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
         utils.update_fire_intensity(game)
         return [f"Gathered {ft.to_gather[resource]} {resource}",
                 'Time passes the fire weakens']
     else:
-        return ["If you leave now fire will extinguished"]
+        return ["If you leave now fire will extinguish"]
 
 def burn(args, game):
-    resources = ['wood', 'skulls']
+    fuels = ["branches", "skulls"]
 
     if not args:
-        return ["Burn what?"]
+        return ["Burn what?",
+                "Usage: burn <resource>  OR  burn <amount> <resource>"]
 
-    resource = args[0]
+    if len(args) == 1:
+        amount = 1
+        resource = args[0]
 
-    if resource not in resources:
+    elif len(args) == 2 and args[0].isdigit():
+        amount = int(args[0])
+        resource = args[1]
+
+    else:
+        return ["Nothing happens",
+                "Usage: burn <resource> OR burn <amount> <resource>"]
+
+    if resource not in fuels:
         return ["You can't burn something like that"]
 
-    if game['resources'][resource] >= ft.burn_costs[resource]:
-        game['resources'][resource] -= ft.burn_costs[resource]
-        game['fire heat'] += ft.heat_gains[resource]
-        utils.update_fire_intensity(game)
-        return ["Fire thanks you for your service",
-                f"the fire is now {game['fire intensity']}"]
-    else:
+    if amount <= 0:
+        return ["Burn how many?"]
+
+    if game["resources"][resource] < amount:
         return [f"Not enough {resource}"]
+
+    game["resources"][resource] -= amount
+    game["fire heat"] += ft.heat_gains[resource] * amount
+    utils.update_fire_intensity(game)
+
+    # message fixes: don't hardcode wood
+    return [
+        f"You burn {amount} {resource}.",
+        "Fire thanks you for your service.",
+        f"The fire is now {game['fire intensity']}."
+    ]
+
 
 
 COMMAND_MAP = {

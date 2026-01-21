@@ -61,13 +61,13 @@ while running:
             elif event.key == pygame.K_ESCAPE:
                 running = False
 
-            # elif event.key == pygame.K_PAGEUP:
-            #     scroll_lines += 3
-            #
-            # elif event.key == pygame.K_PAGEDOWN:
-            #     scroll_lines -= 3
-            #     if scroll_lines < 0:
-            #         scroll_lines = 0
+            elif event.key == pygame.K_PAGEUP:
+                scroll_lines += 3
+
+            elif event.key == pygame.K_PAGEDOWN:
+                scroll_lines -= 3
+                if scroll_lines < 0:
+                    scroll_lines = 0
 
             else:
                 cmd_text += event.unicode

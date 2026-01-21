@@ -6,7 +6,7 @@ def new_game():
         "encounter_index": 0,
         "fire heat": 9,
         "fire intensity": "CALM",
-        "resources": {"wood": 0, "paper": 0, "salt": 0, "skulls": 0, "herbs": 0},
+        "resources": {"branches": 0, "paper": 0, "salt": 0, "skulls": 0, "herbs": 0},
 
         # later:
         # "player": create_player(),
