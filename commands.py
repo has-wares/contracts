@@ -63,42 +63,56 @@ def gather(args, game):
 
 def burn(args, game):
     fuels = ["branches", "skulls"]
+    singular_to_plural = {"branch": "branches", "skull": "skulls"}
+    plural_to_singular = {v: k for k, v in singular_to_plural.items()}
 
     if not args:
-        return ["Burn what?",
-                "Usage: burn <resource>  OR  burn <amount> <resource>"]
+        return [
+            "Burn what?",
+            "Usage: burn <resource>  OR  burn <amount> <resource>",
+            "Examples: burn branch | burn 2 branches"
+        ]
+
 
     if len(args) == 1:
         amount = 1
-        resource = args[0]
-
+        raw = args[0].lower()
     elif len(args) == 2 and args[0].isdigit():
         amount = int(args[0])
-        resource = args[1]
-
+        raw = args[1].lower()
     else:
-        return ["Nothing happens",
-                "Usage: burn <resource> OR burn <amount> <resource>"]
-
-    if resource not in fuels:
-        return ["You can't burn something like that"]
+        return ["Nothing happens.", "Usage: burn <resource> OR burn <amount> <resource>"]
 
     if amount <= 0:
         return ["Burn how many?"]
 
-    if game["resources"][resource] < amount:
-        return [f"Not enough {resource}"]
+
+    resource = singular_to_plural.get(raw, raw)
+
+    if resource not in fuels:
+        return ["You can't burn something like that."]
+
+    if game["resources"].get(resource, 0) < amount:
+        return [f"Not enough {resource}."]
+
+    extra = []
+    if raw in fuels and amount == 1:
+        extra = ["(It's 'branch'. The fire doesn't care.)"]
+    elif raw in singular_to_plural and amount != 1:  # "burn 5 branch"
+        extra = ["(Plural. The fire can count, at least.)"]
 
     game["resources"][resource] -= amount
     game["fire_heat"] += ft.heat_gains[resource] * amount
     utils.update_fire_intensity(game)
 
-    # message fixes: don't hardcode wood
+    shown = plural_to_singular[resource] if amount == 1 else resource
+
     return [
-        f"You burn {amount} {resource}.",
+        f"You burn {amount} {shown}.",
         "Fire thanks you for your service.",
         f"The fire is now {game['fire_intensity']}."
-    ]
+    ] + extra
+
 
 def create(args, game):
 
