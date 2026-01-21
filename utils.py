@@ -30,8 +30,8 @@ def format_resources(game):
 
     return "\n".join(lines)
 
-def get_fire_points(game):
-    return f"FIRE POINTS: {game['fire points']}"
+def get_fire_heat(game):
+    return f"FIRE HEAT: {game['fire heat']}"
 
 def get_fire_intensity(game):
     return f"FIRE INTENSITY: {game['fire intensity']}"

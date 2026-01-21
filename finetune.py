@@ -1,7 +1,7 @@
 
 action_costs = {
-    'wood': 5,
-    'herbs' : 5,
+    'wood': 3,
+    'herbs' : 2,
     }
 
 to_gather ={
@@ -12,4 +12,9 @@ to_gather ={
 burn_costs = {
     "wood": 5,
     "skull": 1,
+    }
+
+heat_gains = {
+    "wood" : 5,
+    "skulls" : 10,
     }

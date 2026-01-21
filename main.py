@@ -73,7 +73,7 @@ while running:
                 cmd_text += event.unicode
 
     resource_text = utils.format_resources(game)
-    fire_points = utils.get_fire_points(game)
+    fire_points = utils.get_fire_heat(game)
     fire_intensity = utils.get_fire_intensity(game)
 
     fire.update(dt, 8)
@@ -82,7 +82,7 @@ while running:
 
     ui.draw_rect(screen, uiconfig.WHITE, ui.TEXT_ENTRY)
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESPONSE_BOX)
-    ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
+    # ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESOURCE_BOX)
     ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
 

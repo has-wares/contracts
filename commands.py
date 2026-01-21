@@ -37,14 +37,14 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire points'] >= ft.action_costs[resource]:
-        game['fire points'] -= ft.action_costs[resource]
+    if game['fire heat'] >= ft.action_costs[resource]:
+        game['fire heat'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
-        game['fire heat'] -= 2
         utils.update_fire_intensity(game)
-        return [f"Gathered {ft.to_gather[resource]} {resource}"]
+        return [f"Gathered {ft.to_gather[resource]} {resource}",
+                'Time passes the fire weakens']
     else:
-        return ["Not enough fire points"]
+        return ["If you leave now fire will extinguished"]
 
 def burn(args, game):
     resources = ['wood', 'skulls']
@@ -59,7 +59,7 @@ def burn(args, game):
 
     if game['resources'][resource] >= ft.burn_costs[resource]:
         game['resources'][resource] -= ft.burn_costs[resource]
-        game['fire heat'] += 5
+        game['fire heat'] += ft.heat_gains[resource]
         utils.update_fire_intensity(game)
         return ["Fire thanks you for your service",
                 f"the fire is now {game['fire intensity']}"]
