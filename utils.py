@@ -31,10 +31,10 @@ def format_resources(game):
     return "\n".join(lines)
 
 def get_fire_heat(game):
-    return f"FIRE HEAT: {game['fire heat']}"
+    return f"FIRE HEAT: {game['fire_heat']}"
 
 def get_fire_intensity(game):
-    return f"FIRE INTENSITY: {game['fire intensity']}"
+    return f"FIRE INTENSITY: {game['fire_intensity']}"
 
 def clamp(x, low, high):
     return max(low, min(x, high))
@@ -42,15 +42,15 @@ def clamp(x, low, high):
 
 
 def update_fire_intensity(game):
-    heat = clamp(game.get("fire heat", 0), 0, 30)
-    game["fire heat"] = heat
+    heat = clamp(game.get("fire_heat", 0), 0, 30)
+    game["fire_heat"] = heat
 
     if heat < 11:
-        game['fire intensity'] = "CALM"
+        game['fire_intensity'] = "CALM"
     elif heat < 21:
-        game['fire intensity'] = "CRACKLING"
+        game['fire_intensity'] = "CRACKLING"
     else:
-        game['fire intensity'] = "ROARING"
+        game['fire_intensity'] = "ROARING"
 
     # heat = clamp(game.get("fire heat", 0), 0, 30)
 

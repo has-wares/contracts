@@ -1,7 +1,7 @@
 from contractor import get_contracts, create_contract_log
 import finetune as ft
 import utils
-
+import camping
 
 def get_help(args, game):
     return [
@@ -9,8 +9,9 @@ def get_help(args, game):
         "  help",
         "  look",
         "  contracts",
-        "  gather brC",
-        "  gather herbs",
+        "  gather <item>",
+        "  create <item>",
+        "  burn <item>",
         "",
         "Tip: Use PageUp/PageDown or mouse wheel to scroll",
         "the log."
@@ -19,9 +20,13 @@ def get_help(args, game):
 
 
 def look(args, game):
-    fire_intensity = game['fire intensity']
+    fire_intensity = game['fire_intensity']
 
     if fire_intensity == "CALM":
+        if 'monastery' not in game['seen']:
+            game['seen'].append('monastery')
+            return ["Fire allow for a vision",
+                    "Road to the Monastery is visible"]
         return ["You see the road to the Monastery"]
     elif fire_intensity == "CRACKLING":
         return ["Beyond the Monastery you see.."]
@@ -35,7 +40,7 @@ def show_contracts(args, game):
     return ["CONTRACTS:"] + log
 
 def gather(args, game):
-    resources = ['wood', 'herbs']
+    resources = ['branches', 'herbs']
     if not args:
         return ["Gather what?",
                 "wood/herbs"]
@@ -45,8 +50,8 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire heat'] > ft.action_costs[resource]:
-        game['fire heat'] -= ft.action_costs[resource]
+    if game['fire_heat'] > ft.action_costs[resource]:
+        game['fire_heat'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
         utils.update_fire_intensity(game)
         return [f"Gathered {ft.to_gather[resource]} {resource}",
@@ -83,17 +88,31 @@ def burn(args, game):
         return [f"Not enough {resource}"]
 
     game["resources"][resource] -= amount
-    game["fire heat"] += ft.heat_gains[resource] * amount
+    game["fire_heat"] += ft.heat_gains[resource] * amount
     utils.update_fire_intensity(game)
 
     # message fixes: don't hardcode wood
     return [
         f"You burn {amount} {resource}.",
         "Fire thanks you for your service.",
-        f"The fire is now {game['fire intensity']}."
+        f"The fire is now {game['fire_intensity']}."
     ]
 
+def create(args, game):
 
+    dispatch ={
+        'paper' : camping.create_paper,
+            }
+
+    if not args:
+        return ["Create what?",
+                "Try paper.."]
+
+    item_id = args[0]
+    func = dispatch.get(item_id)
+    if not func:
+        return ["you can't create that"]
+    return func(game)
 
 COMMAND_MAP = {
     'help': get_help,
@@ -101,6 +120,7 @@ COMMAND_MAP = {
     'contracts': show_contracts,
     'gather': gather,
     'burn' : burn,
+    'create': create,
 }
 
 def parse_command(command: str):
@@ -120,4 +140,4 @@ def dispatch_command(command, game):
     if not func:
         return [f"Unknown command: {cmd}"]
 
-    return func(args, game)  # <-- CALL the function
+    return func(args, game)
