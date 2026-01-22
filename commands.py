@@ -20,13 +20,14 @@ def get_help(args, game):
 
 
 def look(args, game):
-    fire_intensity = game['fire_intensity']
+    camp = game['camp']
+    fire_intensity = camp['fire_intensity']
 
     if fire_intensity == "FEEBLE":
         return ["Fire allows no vision"]
     elif fire_intensity == "CALM":
-        if 'monastery' not in game['seen']:
-            game['seen'].append('monastery')
+        if 'monastery' not in camp['seen']:
+            camp['seen'].append('monastery')
             return ["Fire allows for a vision",
                     "Road to the Monastery is visible"]
         return ["You see the road to the Monastery"]
@@ -42,6 +43,7 @@ def show_contracts(args, game):
     return ["CONTRACTS:"] + log
 
 def gather(args, game):
+    camp = game['camp']
     resources = ['branches', 'herbs']
     if not args:
         return ["Gather what?",
@@ -52,9 +54,9 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire_heat'] > ft.action_costs[resource]: # fire doesnt go 0 for now
-        game['fire_heat'] -= ft.action_costs[resource]
-        game['resources'][resource] += ft.to_gather[resource]
+    if camp['fire_heat'] > ft.action_costs[resource]: # fire doesnt go 0 for now
+        camp['fire_heat'] -= ft.action_costs[resource]
+        camp['resources'][resource] += ft.to_gather[resource]
         utils.update_fire_intensity(game)
         return [f"Gathered {ft.to_gather[resource]} {resource}",
                 'Time passes fire weakens']
@@ -62,6 +64,7 @@ def gather(args, game):
         return ["Fire does not allow venturing further"]
 
 def burn(args, game):
+    camp = game['camp']
     fuels = ["branches", "skulls"]
     singular_to_plural = {"branch": "branches", "skull": "skulls"}
     plural_to_singular = {v: k for k, v in singular_to_plural.items()}
@@ -92,7 +95,7 @@ def burn(args, game):
     if resource not in fuels:
         return ["You can't burn something like that."]
 
-    if game["resources"].get(resource, 0) < amount:
+    if camp["resources"].get(resource, 0) < amount:
         return [f"Not enough {resource}."]
 
     extra = []
@@ -101,8 +104,8 @@ def burn(args, game):
     elif raw in singular_to_plural and amount != 1:  # "burn 5 branch"
         extra = ["(Plural. The fire can count, at least.)"]
 
-    game["resources"][resource] -= amount
-    game["fire_heat"] += ft.heat_gains[resource] * amount
+    camp["resources"][resource] -= amount
+    camp["fire_heat"] += ft.heat_gains[resource] * amount
     utils.update_fire_intensity(game)
 
     shown = plural_to_singular[resource] if amount == 1 else resource
@@ -110,12 +113,12 @@ def burn(args, game):
     return [
         f"You burn {amount} {shown}.",
         "Fire thanks you for your service.",
-        f"The fire is now {game['fire_intensity']}."
+        f"The fire is now {camp['fire_intensity']}."
     ] + extra
 
 
 def create(args, game):
-
+    camp = game['camp']
     dispatch ={
         'paper' : camping.create_paper,
             }

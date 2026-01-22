@@ -21,8 +21,8 @@ def load_frames_auto(path: str, scale_to=None):
     return frames
 
 
-def format_resources(game):
-    resources = game.get('resources', {})
+def format_resources(camp):
+    resources = camp.get('resources', {})
     resource_array = [k for k in resources]
     lines = []
     for i in resource_array:
@@ -40,19 +40,20 @@ def clamp(x, low, high):
     return max(low, min(x, high))
 
 
-
 def update_fire_intensity(game):
-    heat = clamp(game.get("fire_heat", 0), 0, 60)
-    game["fire_heat"] = heat
+    camp = game["camp"]
+    heat = clamp(camp.get("fire_heat", 0), 0, 60)
+    camp["fire_heat"] = heat
 
     if heat < 11:
-        game['fire_intensity'] = "FEEBLE"
+        camp["fire_intensity"] = "FEEBLE"
     elif heat < 26:
-        game['fire_intensity'] = "CALM"
+        camp["fire_intensity"] = "CALM"
     elif heat < 41:
-        game['fire_intensity'] = "CRACKLING"
+        camp["fire_intensity"] = "CRACKLING"
     else:
-        game['fire_intensity'] = "ROARING"
+        camp["fire_intensity"] = "ROARING"
+
 
     # heat = clamp(game.get("fire heat", 0), 0, 30)
 
