@@ -40,11 +40,9 @@ def clamp(x, low, high):
     return max(low, min(x, high))
 
 
-def update_fire_intensity(game):
-    camp = game["camp"]
+def update_fire_intensity(camp):
     heat = clamp(camp.get("fire_heat", 0), 0, 60)
     camp["fire_heat"] = heat
-
     if heat < 11:
         camp["fire_intensity"] = "FEEBLE"
     elif heat < 26:
@@ -54,9 +52,3 @@ def update_fire_intensity(game):
     else:
         camp["fire_intensity"] = "ROARING"
 
-
-    # heat = clamp(game.get("fire heat", 0), 0, 30)
-
-# from game import new_game
-# game=new_game()
-# format_resources(game)

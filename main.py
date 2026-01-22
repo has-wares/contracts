@@ -36,7 +36,8 @@ while running:
 
     match game['mode']:
         case 'camp':
-            scroll_lines = draw_camp(screen, dt, fire, game, font, response_lines, scroll_lines)
+            camp = game['camp']
+            scroll_lines = draw_camp(screen, dt, fire, camp, font, response_lines, scroll_lines)
         case 'expedition':
             pass
 

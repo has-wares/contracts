@@ -3,66 +3,55 @@ import utils
 import ui
 import uiconfig
 
-def apply_heat_cost(game, amt):
-    camp = game['camp']
-    camp['fire_heat'] -= amt
-    camp['fire_heat'] = utils.clamp(camp['fire_heat'],0,60)
+def apply_heat_cost(camp, amt):
+    camp["fire_heat"] -= amt
+    camp["fire_heat"] = utils.clamp(camp["fire_heat"], 0, 60)
 
-
-def check_for_ingredients(game, ingredients):
-    camp = game['camp']
+def check_for_ingredients(camp, ingredients):
     for k, v in ingredients.items():
-        if camp['resources'].get(k, 0) < v:
+        if camp["resources"].get(k, 0) < v:
             return False
     return True
 
-def spend_ingredients(game, ingredients):
-    camp = game['camp']
+def spend_ingredients(camp, ingredients):
     for k, v in ingredients.items():
-        camp['resources'][k] -= v
+        camp["resources"][k] -= v
 
-def add_output(game, recipe):
-    camp = game['camp']
-    target = recipe.get('target', 'resources')
-    for k, v in recipe['output'].items():
+def add_output(camp, recipe):
+    target = recipe.get("target", "resources")  # "resources" or "key_items"
+    for k, v in recipe["output"].items():
         camp[target][k] = camp[target].get(k, 0) + v
 
-
-
-
-
-def create_item(game, item_id):
-    camp = game['camp']
-    recipe = RECIPES.get(item_id, None)
+def create_item(camp, item_id):
+    recipe = RECIPES.get(item_id)
 
     if not recipe:
         return ["You can't craft that"]
-    if camp['fire_heat'] <= recipe['heat_cost']:
-        return ["Fire is to weak"]
-    if not check_for_ingredients(game, recipe['ingredients']):
+    if camp["fire_heat"] <= recipe["heat_cost"]:
+        return ["Fire is too weak"]
+    if not check_for_ingredients(camp, recipe["ingredients"]):
         return ["You are missing something"]
 
-    apply_heat_cost(game, recipe['heat_cost'])
-    spend_ingredients(game, recipe['ingredients'])
-    add_output(game, recipe)
-    utils.update_fire_intensity(game)
-    return [f"Fire gives you back {item_id}",
-            f"Fire is now {camp['fire_intensity']}"]
+    apply_heat_cost(camp, recipe["heat_cost"])
+    spend_ingredients(camp, recipe["ingredients"])
+    add_output(camp, recipe)
+    utils.update_fire_intensity(camp)  # <-- update utils to accept camp
+    return [
+        f"Fire gives you back {item_id}",
+        f"Fire is now {camp['fire_intensity']}",
+    ]
 
-def create_paper(game):
-    camp = game['camp']
-    level = camp['fire_order'][camp['fire_intensity']]
+def create_paper(camp):
+    level = camp["fire_order"][camp["fire_intensity"]]
 
-    if level < camp['fire_order']["CALM"]:
+    if level < camp["fire_order"]["CALM"]:
         return ["Fire is weak", "Fire Intensity required: CALM"]
-    if level > camp['fire_order']['CALM']:
+    if level > camp["fire_order"]["CALM"]:
         return ["Fire is too wild", "paper turns to ash", "Fire Intensity required: CALM"]
 
-    return create_item(game, "paper")
+    return create_item(camp, "paper")
 
-
-def draw_camp(screen, dt, fire, game, font, response_lines, scroll_lines):
-    camp = game['camp']
+def draw_camp(screen, dt, fire, camp, font, response_lines, scroll_lines):
     fire.update(dt, 8)
     screen.fill(uiconfig.BLACK)
     fire.draw_centered(screen, ui.BONFIRE_BOX.center)

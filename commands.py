@@ -106,7 +106,7 @@ def burn(args, game):
 
     camp["resources"][resource] -= amount
     camp["fire_heat"] += ft.heat_gains[resource] * amount
-    utils.update_fire_intensity(game)
+    utils.update_fire_intensity(camp)
 
     shown = plural_to_singular[resource] if amount == 1 else resource
 
@@ -131,7 +131,7 @@ def create(args, game):
     func = dispatch.get(item_id)
     if not func:
         return ["you can't create that"]
-    return func(game)
+    return func(camp)
 
 COMMAND_MAP = {
     'help': get_help,
