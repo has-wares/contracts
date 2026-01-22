@@ -5,6 +5,7 @@ import utils
 from commands import dispatch_command
 from animator import LoopAnim
 from game import new_game
+from input import handle_events
 
 pygame.init()
 screen = pygame.display.set_mode((uiconfig.WINDOW_WIDTH, uiconfig.WINDOW_HEIGHT))
@@ -30,58 +31,26 @@ running = True
 
 while running:
     dt = clock.tick(60)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-
-        elif event.type == pygame.MOUSEWHEEL:
-            # wheel up -> scroll up, wheel down -> scroll down
-            scroll_lines += event.y
-            if scroll_lines < 0:
-                scroll_lines = 0
-
-        elif event.type == pygame.KEYDOWN:
-
-            if event.key == pygame.K_RETURN:
-                output = dispatch_command(cmd_text, game)
-                cmd_text = ""
-
-                if output:
-                    response_lines.extend(output)
-                    if len(response_lines) > MAX_LOG_LINES:
-                        response_lines = response_lines[-MAX_LOG_LINES:]
-                    scroll_lines = 0
-
-            elif event.key == pygame.K_BACKSPACE:
-                cmd_text = cmd_text[:-1]
-
-            elif event.key == pygame.K_ESCAPE:
-                running = False
-
-            elif event.key == pygame.K_PAGEUP:
-                scroll_lines += 3
-
-            elif event.key == pygame.K_PAGEDOWN:
-                scroll_lines -= 3
-                if scroll_lines < 0:
-                    scroll_lines = 0
-
-            else:
-                cmd_text += event.unicode
+    running, cmd_text, response_lines, scroll_lines = handle_events(game, cmd_text, response_lines,scroll_lines, dispatch_command=dispatch_command, MAX_LOG_LINES=MAX_LOG_LINES)
 
     fire.update(dt, 8)
+
     screen.fill(uiconfig.BLACK)
+
     fire.draw_centered(screen, ui.BONFIRE_BOX.center)
 
     ui.draw_rect(screen, uiconfig.WHITE, ui.TEXT_ENTRY)
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESPONSE_BOX)
+
     # ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
+    #ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
+
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESOURCE_BOX)
-    ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
+
 
     ui.draw_text(screen, cmd_text, font, uiconfig.WHITE, ui.TEXT_ENTRY)
     ui.draw_text(screen, f"FIRE HEAT: {game['fire_heat']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
-    ui.draw_text(screen, f"FIRE: {game['fire_intensity']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=650)
+    ui.draw_text(screen, f"FIRE: {game['fire_intensity']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=740)
 
     ui.draw_multiline_text(screen, utils.format_resources(game), font, uiconfig.WHITE, ui.RESOURCE_BOX)
 

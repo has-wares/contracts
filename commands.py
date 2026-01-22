@@ -52,7 +52,7 @@ def gather(args, game):
     if resource not in resources:
         return ["You can't gather something like that"]
 
-    if game['fire_heat'] >= ft.action_costs[resource]:
+    if game['fire_heat'] > ft.action_costs[resource]: # fire doesnt go 0 for now
         game['fire_heat'] -= ft.action_costs[resource]
         game['resources'][resource] += ft.to_gather[resource]
         utils.update_fire_intensity(game)

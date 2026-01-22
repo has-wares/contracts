@@ -3,7 +3,6 @@ def new_game():
         "mode": "camp",
         "contracts": [],
         "selected_contract": None,
-        "encounter_index": 0,
         "fire_heat": 5,
         "fire_intensity": "FEEBLE",
         "fire_order": {"FEEBLE": 0, "CALM": 1, "CRACKLING": 2, "ROARING": 3},
