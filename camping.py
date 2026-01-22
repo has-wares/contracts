@@ -1,5 +1,7 @@
 from recipes import RECIPES
 import utils
+import ui
+import uiconfig
 
 def apply_heat_cost(game, amt):
     game['fire_heat'] -= amt
@@ -51,3 +53,20 @@ def create_paper(game):
         return ["Fire is too wild", "paper turns to ash", "Fire Intensity required: CALM"]
 
     return create_item(game, "paper")
+
+
+def draw_camp(screen, dt, fire, game, font, response_lines, scroll_lines):
+    fire.update(dt, 8)
+    screen.fill(uiconfig.BLACK)
+    fire.draw_centered(screen, ui.BONFIRE_BOX.center)
+
+    ui.draw_rect(screen, uiconfig.WHITE, ui.RESOURCE_BOX)
+    ui.draw_text(screen, f"FIRE HEAT: {game['fire_heat']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
+    ui.draw_text(screen, f"FIRE: {game['fire_intensity']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=740)
+    ui.draw_multiline_text(screen, utils.format_resources(game), font, uiconfig.WHITE, ui.RESOURCE_BOX)
+
+    scroll_lines, max_scroll = ui.draw_scrollable_text(
+        screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX
+    )
+    scroll_lines = max(0, min(scroll_lines, max_scroll))
+    return scroll_lines

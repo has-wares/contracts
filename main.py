@@ -6,6 +6,7 @@ from commands import dispatch_command
 from animator import LoopAnim
 from game import new_game
 from input import handle_events
+from camping import draw_camp
 
 pygame.init()
 screen = pygame.display.set_mode((uiconfig.WINDOW_WIDTH, uiconfig.WINDOW_HEIGHT))
@@ -33,31 +34,16 @@ while running:
     dt = clock.tick(60)
     running, cmd_text, response_lines, scroll_lines = handle_events(game, cmd_text, response_lines,scroll_lines, dispatch_command=dispatch_command, MAX_LOG_LINES=MAX_LOG_LINES)
 
-    fire.update(dt, 8)
+    match game['mode']:
+        case 'camp':
+            scroll_lines = draw_camp(screen, dt, fire, game, font, response_lines, scroll_lines)
+        case 'expedition':
+            pass
 
-    screen.fill(uiconfig.BLACK)
-
-    fire.draw_centered(screen, ui.BONFIRE_BOX.center)
 
     ui.draw_rect(screen, uiconfig.WHITE, ui.TEXT_ENTRY)
     ui.draw_rect(screen, uiconfig.WHITE, ui.RESPONSE_BOX)
-
-    # ui.draw_rect(screen, uiconfig.RED, ui.BONFIRE_BOX)
-    #ui.draw_rect(screen, uiconfig.RED, ui.FIRE_INFO_BOX)
-
-    ui.draw_rect(screen, uiconfig.WHITE, ui.RESOURCE_BOX)
-
-
     ui.draw_text(screen, cmd_text, font, uiconfig.WHITE, ui.TEXT_ENTRY)
-    ui.draw_text(screen, f"FIRE HEAT: {game['fire_heat']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX)
-    ui.draw_text(screen, f"FIRE: {game['fire_intensity']}", font, uiconfig.WHITE, ui.FIRE_INFO_BOX, padding=740)
-
-    ui.draw_multiline_text(screen, utils.format_resources(game), font, uiconfig.WHITE, ui.RESOURCE_BOX)
-
-    scroll_lines, max_scroll = ui.draw_scrollable_text(
-        screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX
-    )
-    scroll_lines = max(0, min(scroll_lines, max_scroll))
 
     pygame.display.flip()
 
