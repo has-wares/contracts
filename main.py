@@ -57,6 +57,7 @@ while running:
     scroll_lines, max_scroll = ui.draw_scrollable_text(
         screen, response_lines, scroll_lines, font, uiconfig.WHITE, ui.RESPONSE_BOX
     )
+    scroll_lines = max(0, min(scroll_lines, max_scroll))
 
     pygame.display.flip()
 
