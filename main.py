@@ -7,6 +7,7 @@ from animator import LoopAnim
 from game import new_game
 from input import handle_events
 from camping import draw_camp
+from expedition import draw_expedition
 
 pygame.init()
 screen = pygame.display.set_mode((uiconfig.WINDOW_WIDTH, uiconfig.WINDOW_HEIGHT))
@@ -39,7 +40,8 @@ while running:
             camp = game['camp']
             scroll_lines = draw_camp(screen, dt, fire, camp, font, response_lines, scroll_lines)
         case 'expedition':
-            pass
+            expedition = game['expedition']
+            scroll_lines = draw_expedition(screen, expedition, font, response_lines, scroll_lines)
 
 
     ui.draw_rect(screen, uiconfig.WHITE, ui.TEXT_ENTRY)

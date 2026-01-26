@@ -7,6 +7,24 @@ def apply_heat_cost(camp, amt):
     camp["fire_heat"] -= amt
     camp["fire_heat"] = utils.clamp(camp["fire_heat"], 0, 60)
 
+# def get_fire_heat(game):
+#     return f"FIRE HEAT: {game['fire_heat']}"
+#
+# def get_fire_intensity(game):
+#     return f"FIRE INTENSITY: {game['fire_intensity']}"
+
+def update_fire_intensity(camp):
+    heat = utils.clamp(camp.get("fire_heat", 0), 0, 60)
+    camp["fire_heat"] = heat
+    if heat < 11:
+        camp["fire_intensity"] = "FEEBLE"
+    elif heat < 26:
+        camp["fire_intensity"] = "CALM"
+    elif heat < 41:
+        camp["fire_intensity"] = "CRACKLING"
+    else:
+        camp["fire_intensity"] = "ROARING"
+
 def check_for_ingredients(camp, ingredients):
     for k, v in ingredients.items():
         if camp["resources"].get(k, 0) < v:
@@ -35,7 +53,7 @@ def create_item(camp, item_id):
     apply_heat_cost(camp, recipe["heat_cost"])
     spend_ingredients(camp, recipe["ingredients"])
     add_output(camp, recipe)
-    utils.update_fire_intensity(camp)  # <-- update utils to accept camp
+    update_fire_intensity(camp)  # <-- update utils to accept camp
     return [
         f"Fire gives you back {item_id}",
         f"Fire is now {camp['fire_intensity']}",

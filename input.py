@@ -1,5 +1,5 @@
-
 import pygame
+import utils
 
 def handle_events(
     game,
@@ -11,6 +11,7 @@ def handle_events(
     MAX_LOG_LINES,
 ):
 
+    utils.ensure_history(game)
     running = True
 
     for event in pygame.event.get():
@@ -25,9 +26,18 @@ def handle_events(
 
         elif event.type == pygame.KEYDOWN:
 
-            if event.key == pygame.K_RETURN:
-                output = dispatch_command(cmd_text, game)
+            if event.key == pygame.K_UP:
+                cmd_text = utils.history_up(game, cmd_text)
+            elif event.key == pygame.K_DOWN:
+                cmd_text = utils.history_down(game)
+
+            elif event.key == pygame.K_RETURN:
+                cmd = cmd_text.strip()
+                if not cmd:
+                    cmd_text = ''
+                output = dispatch_command(cmd, game)
                 cmd_text = ""
+                utils.history_push(game, cmd)
 
                 if output:
                     if isinstance(output, str):

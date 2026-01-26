@@ -2,6 +2,7 @@ from contractor import get_contracts, create_contract_log
 import finetune as ft
 import utils
 import camping
+import expedition
 
 def get_help(args, game):
     return [
@@ -36,11 +37,24 @@ def look(args, game):
     else:
         return ["Beyond .. you see the Forsaken Shore"]
 
+####may be removed####
 def show_contracts(args, game):
-    if len(game['contracts']) == 0:
-        game['contracts'] = get_contracts()
-    log = create_contract_log(game['contracts'])
+    contracts = game['global']['contracts']
+
+    if not contracts:
+        contracts.extend(get_contracts())
+
+    log = create_contract_log(contracts)
     return ["CONTRACTS:"] + log
+
+
+def select_contract(args, game):
+
+    if len(args) == 0:
+        return ["Select which one?(1 2 r 3)"] + show_contracts(args,game)
+
+    return ["Blabla"]
+####may be removed####
 
 def gather(args, game):
     camp = game['camp']
@@ -57,7 +71,7 @@ def gather(args, game):
     if camp['fire_heat'] > ft.action_costs[resource]: # fire doesnt go 0 for now
         camp['fire_heat'] -= ft.action_costs[resource]
         camp['resources'][resource] += ft.to_gather[resource]
-        utils.update_fire_intensity(game)
+        camping.update_fire_intensity(camp)
         return [f"Gathered {ft.to_gather[resource]} {resource}",
                 'Time passes fire weakens']
     else:
@@ -106,7 +120,7 @@ def burn(args, game):
 
     camp["resources"][resource] -= amount
     camp["fire_heat"] += ft.heat_gains[resource] * amount
-    utils.update_fire_intensity(camp)
+    camping.update_fire_intensity(camp)
 
     shown = plural_to_singular[resource] if amount == 1 else resource
 
@@ -133,6 +147,20 @@ def create(args, game):
         return ["you can't create that"]
     return func(camp)
 
+def embark(args,game):
+    if game['mode'] != 'camp':
+        return ["you cant embark from here"]
+    return expedition.cmd_embark(args, game)
+
+def abandon(args, game):
+    if game['mode'] == 'camp':
+        return ['you cant abandon the camp']
+
+    return expedition.abandon(args, game)
+
+def advance(args, game):
+    return expedition.advance(args, game)
+
 COMMAND_MAP = {
     'help': get_help,
     'look': look,
@@ -140,7 +168,11 @@ COMMAND_MAP = {
     'gather': gather,
     'burn' : burn,
     'create': create,
-}
+    'select': select_contract,
+    'embark': embark,
+    'abandon': abandon,
+    'advance' : advance,
+    }
 
 def parse_command(command: str):
     cmdline = command.lower().strip()

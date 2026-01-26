@@ -19,12 +19,7 @@ def new_game():
             'seen': [],
             },
 
-        'expedition': {
-            "depth": 0,
-            "actions": 8,
-            "supplies": 6,
-            "danger": 0.25,
-            }
+        'expedition': {},
 
 
     }

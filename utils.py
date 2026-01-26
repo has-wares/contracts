@@ -30,25 +30,53 @@ def format_resources(camp):
 
     return "\n".join(lines)
 
-def get_fire_heat(game):
-    return f"FIRE HEAT: {game['fire_heat']}"
 
-def get_fire_intensity(game):
-    return f"FIRE INTENSITY: {game['fire_intensity']}"
 
 def clamp(x, low, high):
     return max(low, min(x, high))
 
 
-def update_fire_intensity(camp):
-    heat = clamp(camp.get("fire_heat", 0), 0, 60)
-    camp["fire_heat"] = heat
-    if heat < 11:
-        camp["fire_intensity"] = "FEEBLE"
-    elif heat < 26:
-        camp["fire_intensity"] = "CALM"
-    elif heat < 41:
-        camp["fire_intensity"] = "CRACKLING"
-    else:
-        camp["fire_intensity"] = "ROARING"
 
+def ensure_history(game):
+    game.setdefault('cmd_history', [])
+    game.setdefault('history_index', 0)
+    game.setdefault('history_draft', '')
+    game.setdefault('h_browsing', False)
+
+def history_push(game, cmd):
+    cmd = cmd.strip()
+    if not cmd:
+        return
+
+    history = game['cmd_history']
+    if history and history[-1] == cmd:
+        return
+
+    history.append(cmd)
+    game['history_index'] = len(history)
+    game['h_browsing'] = False
+    game['history_draft'] = ''
+
+def history_up(game, cmd_text):
+    history = game['cmd_history']
+    if not history:
+        return cmd_text
+
+    if not game['h_browsing']:
+        game['history_draft'] = cmd_text
+        game['h_browsing'] = True
+
+    game['history_index'] = max(0, game['history_index'] - 1)
+    return history[game['history_index']]
+
+def history_down(game):
+    history = game['cmd_history']
+    if not history:
+        return ''
+
+    game['history_index'] = min(len(history), game['history_index'] + 1)
+
+    if game['history_index'] == len(history):
+        game['h_browsing'] = False
+        return game.get('history_draft', '')
+    return history[game['history_index']]
